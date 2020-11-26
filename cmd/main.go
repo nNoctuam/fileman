@@ -2,6 +2,7 @@ package main
 
 import (
 	"filemanager/internal"
+	"fmt"
 	"time"
 
 	"github.com/nsf/termbox-go"
@@ -12,7 +13,13 @@ func main() {
 		panic(err)
 	}
 	defer termbox.Close()
-	screen := internal.NewScreen()
+
+	filelist := internal.NewFilelist()
+	err := filelist.Open("/")
+	if err != nil {
+		fmt.Println(err)
+	}
+	screen := internal.NewScreen(filelist)
 
 	eventQueue := make(chan termbox.Event)
 	go func() {
@@ -30,7 +37,8 @@ loop:
 			}
 		default:
 			screen.Render()
-			time.Sleep(16667 * time.Microsecond)
+			//time.Sleep(16667 * time.Microsecond)
+			time.Sleep(1 * time.Second)
 		}
 	}
 }
